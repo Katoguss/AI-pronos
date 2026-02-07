@@ -83,7 +83,7 @@ async def prono(
     if not any(r.id in ALLOWED_ROLE_IDS for r in member.roles):
         await interaction.response.send_message(
             "Accès refusé: tu n'as pas le rôle requis pour utiliser cette commande.",
-            ephemeral=True,
+            ephemeral=False,
         )
         return
 
