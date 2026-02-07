@@ -13,6 +13,11 @@ RISK_CHOICES = [
     app_commands.Choice(name="Haut (3.0 - 6.0)", value="haut"),
 ]
 
+ALLOWED_ROLE_IDS = {
+    1469711683277557833,
+    1466017041977966632,
+}
+
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
@@ -57,6 +62,7 @@ def _build_search_query(demande: str | None) -> str:
 
 
 @tree.command(name="prono", description="Génère un pronostic football et l'envoie en DM.")
+@app_commands.guild_only()
 @app_commands.describe(
     cote="(optionnel) Cote visée (ex: 2.4, 'entre 2 et 3')",
     risque="(optionnel) Niveau du risque",
@@ -69,6 +75,18 @@ async def prono(
     risque: app_commands.Choice[str] | None = None,
     demande: str | None = None,
 ):
+    member = interaction.user if isinstance(interaction.user, discord.Member) else None
+    if not interaction.guild or not member:
+        await interaction.response.send_message("Commande utilisable uniquement sur un serveur.", ephemeral=True)
+        return
+
+    if not any(r.id in ALLOWED_ROLE_IDS for r in member.roles):
+        await interaction.response.send_message(
+            "Accès refusé: tu n'as pas le rôle requis pour utiliser cette commande.",
+            ephemeral=True,
+        )
+        return
+
     await interaction.response.defer(thinking=True)
 
     s = get_settings()

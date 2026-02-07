@@ -9,7 +9,8 @@ Commande slash `/prono`:
 - le bot répond dans le salon: `Pronostique envoyé en message privé`
 
 ## Commande
-`/prono`
+`/prono` (serveur uniquement)
+- Accès: uniquement les membres ayant l’un de ces rôles (IDs): `1469711683277557833` ou `1466017041977966632`
 - `cote` (optionnel, texte) : ex `2.4` / `entre 2 et 3`
 - `risque` (optionnel, sélection) :
   - `Petit (1.2 - 1.9)`
