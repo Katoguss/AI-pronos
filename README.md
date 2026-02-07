@@ -61,6 +61,7 @@ https://discord.com/oauth2/authorize?client_id=CLIENT_ID&scope=bot%20application
 ## Dépannage
 - Si le bot ne peut pas envoyer de DM: l’utilisateur doit autoriser les messages privés du serveur.
 - Si `/prono` n’apparaît pas: vérifier que le bot a le scope `applications.commands` et relancer le bot.
+- Erreur `HTTP 429` avec message `余额不足...` / code `1113`: ça veut dire *crédits Z.ai insuffisants*. Il faut recharger ton compte Z.ai / activer un pack, ou utiliser une API key d’un compte avec du solde.
 
 ## Références Z.ai
 - Chat Completions: https://docs.z.ai/api-reference/llm/chat-completion
