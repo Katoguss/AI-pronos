@@ -24,11 +24,11 @@ def _pretty_zai_http_error(prefix: str, status_code: int, text: str) -> str:
         msg = str(err.get("message") or "").strip()
 
         if status_code == 429 and code == "1113":
-            return "Crédits/solde Z.ai insuffisants (code 1113). Recharge ton compte Z.ai ou active un pack/abonnement, puis réessaie."
+            return "Crédits/solde IA insuffisants (code 1113)."
 
         if status_code == 429:
             details = f" (code {code})" if code else ""
-            return f"Limite / quota Z.ai atteint{details}. Réessaie plus tard ou augmente ton quota."
+            return f"❌︱Limite / quota IA atteint{details}. Réessaie plus tard"
 
         details = f" (code {code})" if code else ""
         if msg:
@@ -301,5 +301,5 @@ async def zai_prono(prompt: str, *, user_id: str | None = None) -> str:
     fr = last_finish_reason or "unknown"
     rid = f" request_id={last_request_id}" if last_request_id else ""
     raise ZaiApiError(
-        f"Z.ai a renvoyé une réponse vide (finish_reason={fr}{rid}). Relance la commande; si ça persiste, change ZAI_MODEL."
+        f"❌︱L'IA a renvoyé une réponse vide (finish_reason={fr}{rid}). Relance la commande; si ça persiste, change de MODEL"
     )
