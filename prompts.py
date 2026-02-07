@@ -12,12 +12,18 @@ def odds_constraints_from_risk(risk: str | None) -> str:
     return "Aucune contrainte stricte sur la cote. Propose une cote cohérente."
 
 
-def build_prompt(cote: str | None, risk: str | None, demande: str | None) -> str:
+def build_prompt(cote: str | None, risk: str | None, demande: str | None, *, sources_block: str | None) -> str:
     cote_line = f"Cote visée (texte utilisateur): {cote}" if cote else "Cote visée: non spécifiée."
-    demande_line = f"Demande utilisateur: {demande}" if demande else "Demande: propose un prono pertinent (matchs du jour si possible)."
+    demande_line = (
+        f"Demande utilisateur: {demande}"
+        if demande
+        else "Demande: propose un prono pertinent (matchs du jour si possible)."
+    )
+
+    sources = sources_block.strip() if sources_block else "(Aucune source web fournie.)"
 
     return f"""
-Tu es un expert en pronostics football. Tu dois utiliser la recherche web intégrée si nécessaire.
+Tu es un expert en pronostics football.
 Tu dois être clair, prudent et transparent.
 
 Contraintes de risque:
@@ -25,12 +31,16 @@ Contraintes de risque:
 - {cote_line}
 - {demande_line}
 
+Sources web (résumés + liens) à utiliser pour l'analyse (ne pas inventer de stats, n'utiliser que ce qui est cohérent avec ces sources):
+{sources}
+
 Exigences:
-1) Fais une recherche web rapide (forme, blessures, enjeu, probable XI, dynamique, H2H si pertinent).
+1) Base-toi sur les sources ci-dessus (forme, blessures, enjeu, probable XI, dynamique, H2H si pertinent).
 2) Donne UN ticket maximum (simple OU combiné selon le risque).
-3) Donne une justification courte et factuelle, sans inventer de statistiques.
+3) Justification courte et factuelle, sans inventer de statistiques.
 4) Donne une estimation de probabilité (approx), une cote estimée (approx), et un niveau de confiance.
-5) Termine par un avertissement: "Pronostic non garanti, mise responsable."
+5) Dans ANALYSE, ajoute une puce "Sources:" avec 2-4 URLs utilisées.
+6) Termine par un avertissement: "Pronostic non garanti, mise responsable."
 
 Format EXACT à respecter:
 TITRE:
