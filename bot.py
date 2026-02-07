@@ -5,7 +5,7 @@ from discord import app_commands
 
 from config import get_settings
 from prompts import build_prompt
-from zai_client import ZaiApiError, format_web_results, zai_prono, zai_web_search
+from zai_client import ZaiApiError, zai_prono
 
 RISK_CHOICES = [
     app_commands.Choice(name="Petit (Côte à environ 1.2 - 1.9)", value="petit"),
@@ -56,13 +56,6 @@ def _split_for_discord(text: str, limit: int = 1900) -> list[str]:
     return parts
 
 
-def _build_search_query(demande: str | None) -> str:
-    if demande and demande.strip():
-        d = demande.strip()
-        return f"{d} preview blessures composition probable forme enjeux".strip()
-    return "matchs football aujourd'hui preview blessures composition probable forme enjeux".strip()
-
-
 @tree.command(name="prono", description="Génère un pronostic football et l'envoie en DM.")
 @app_commands.guild_only()
 @app_commands.describe(
@@ -98,19 +91,10 @@ async def prono(
 
     await interaction.response.defer(thinking=True)
 
-    s = get_settings()
     risk_value = risque.value if risque else None
     user_id = f"discord:{interaction.user.id}"
 
-    sources_block: str | None = None
-    try:
-        q = _build_search_query(demande)
-        results = await zai_web_search(q, user_id=user_id)
-        sources_block = format_web_results(results[: s.zai_search_count])
-    except Exception:
-        sources_block = None
-
-    prompt = build_prompt(cote=cote, risk=risk_value, demande=demande, sources_block=sources_block)
+    prompt = build_prompt(cote=cote, risk=risk_value, demande=demande)
 
     try:
         prono_txt = await zai_prono(prompt, user_id=user_id)

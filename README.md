@@ -3,8 +3,8 @@
 ## Ce que fait le bot
 Commande slash `/prono`:
 - l’utilisateur (optionnel) indique une cote visée, un niveau de risque, et/ou une demande (match / compétition)
-- le bot fait une recherche web via l’API Z.ai `web_search`
-- le bot envoie le contexte + ta demande à Z.ai `chat/completions`
+- Z.ai fait la recherche web via `web_search` (tool-calls) en se basant sur ta demande
+- le bot envoie ta demande à Z.ai `chat/completions` et exécute les tool-calls si nécessaire
 - le bot envoie le pronostic en DM
 - le bot répond dans le salon: `Pronostique envoyé en message privé`
 

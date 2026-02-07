@@ -12,7 +12,7 @@ def odds_constraints_from_risk(risk: str | None) -> str:
     return "Aucune contrainte stricte sur la cote. Propose une cote cohérente."
 
 
-def build_prompt(cote: str | None, risk: str | None, demande: str | None, *, sources_block: str | None) -> str:
+def build_prompt(cote: str | None, risk: str | None, demande: str | None) -> str:
     cote_line = f"Cote visée (texte utilisateur): {cote}" if cote else "Cote visée: non spécifiée."
     demande_line = (
         f"Demande utilisateur: {demande}"
@@ -20,22 +20,21 @@ def build_prompt(cote: str | None, risk: str | None, demande: str | None, *, sou
         else "Demande: propose un prono pertinent (matchs du jour si possible)."
     )
 
-    sources = sources_block.strip() if sources_block else "(Aucune source web fournie.)"
-
     return f"""
 Tu es un expert en pronostics football.
 Tu dois être clair, prudent et transparent.
+
+Tu as accès à un outil `web_search`.
+Avant de proposer un ticket, utilise `web_search` pour récupérer des infos récentes et vérifiables (forme, blessures, compositions probables, enjeu, dynamique, H2H si pertinent).
+Ne prétends pas avoir des stats exactes si tu ne les as pas.
 
 Contraintes de risque:
 - {odds_constraints_from_risk(risk)}
 - {cote_line}
 - {demande_line}
 
-Sources web (résumés + liens) à utiliser pour l'analyse (ne pas inventer de stats, n'utiliser que ce qui est cohérent avec ces sources):
-{sources}
-
 Exigences:
-1) Base-toi sur les sources ci-dessus (forme, blessures, enjeu, probable XI, dynamique, H2H si pertinent).
+1) Fais 1 à 2 recherches web maximum avec `web_search` (requêtes courtes et ciblées).
 2) Donne UN ticket maximum (simple OU combiné selon le risque).
 3) Justification courte et factuelle, sans inventer de statistiques.
 4) Donne une estimation de probabilité (approx), une cote estimée (approx), et un niveau de confiance.
