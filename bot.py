@@ -8,9 +8,9 @@ from prompts import build_prompt
 from zai_client import ZaiApiError, format_web_results, zai_prono, zai_web_search
 
 RISK_CHOICES = [
-    app_commands.Choice(name="Petit (1.2 - 1.9)", value="petit"),
-    app_commands.Choice(name="Moyen (1.9 - 3.0)", value="moyen"),
-    app_commands.Choice(name="Haut (3.0 - 6.0)", value="haut"),
+    app_commands.Choice(name="Petit (Côte à environ 1.2 - 1.9)", value="petit"),
+    app_commands.Choice(name="Moyen (Côte à environ 1.9 - 3.0)", value="moyen"),
+    app_commands.Choice(name="Haut (Côte à environ 3.0 - 6.0)", value="haut"),
 ]
 
 ALLOWED_ROLE_IDS = {
@@ -79,19 +79,19 @@ async def prono(
 ):
     member = interaction.user if isinstance(interaction.user, discord.Member) else None
     if not interaction.guild or not member:
-        await interaction.response.send_message("Commande utilisable uniquement sur un serveur.", ephemeral=True)
+        await interaction.response.send_message("❌︱Commande utilisable uniquement sur https://discord.gg/yJfnktaWhm.", ephemeral=False)
         return
 
     if interaction.channel_id != ALLOWED_CHANNEL_ID:
         await interaction.response.send_message(
-            f"Commande autorisée uniquement dans ce salon: <#{ALLOWED_CHANNEL_ID}>.",
+            f"❌︱Commande autorisée uniquement dans ce salon: <#{ALLOWED_CHANNEL_ID}>.",
             ephemeral=False,
         )
         return
 
     if not any(r.id in ALLOWED_ROLE_IDS for r in member.roles):
         await interaction.response.send_message(
-            "Accès refusé: tu n'as pas le rôle requis pour utiliser cette commande.",
+            "❌︱Accès refusé: Uniquement les affiliés Celsius ou Razed peuvent utiliser ce bot. <#1467565928312078528> / <#1453071083820552243> pour plus d'infos.",
             ephemeral=False,
         )
         return
@@ -115,27 +115,27 @@ async def prono(
     try:
         prono_txt = await zai_prono(prompt, user_id=user_id)
     except ZaiApiError as e:
-        await interaction.followup.send(f"Erreur IA (Z.ai): {e}", ephemeral=True)
+        await interaction.followup.send(f"❌︱Erreur IA : {e}", ephemeral=False)
         return
     except Exception as e:
-        await interaction.followup.send(f"Erreur inconnue: {e}", ephemeral=True)
+        await interaction.followup.send(f"❌︱Erreur inconnue: {e}", ephemeral=False)
         return
 
     try:
-        chunks = _split_for_discord("Voici ton pronostic :\n\n" + prono_txt)
+        chunks = _split_for_discord("🎁︱Voici ton pronostic :\n\n" + prono_txt)
         for c in chunks:
             await interaction.user.send(c)
     except discord.Forbidden:
         await interaction.followup.send(
-            "Impossible de t'envoyer un DM (messages privés fermés). Active tes MP puis réessaie.",
-            ephemeral=True,
+            "❌︱Impossible de t'envoyer un DM (messages privés fermés). Active tes MP puis réessaie.",
+            ephemeral=False,
         )
         return
     except discord.HTTPException as e:
-        await interaction.followup.send(f"Erreur Discord lors de l'envoi du DM: {e}", ephemeral=True)
+        await interaction.followup.send(f"❌︱Erreur Discord lors de l'envoi du DM: {e}", ephemeral=False)
         return
 
-    await interaction.followup.send("Pronostique envoyé en message privé")
+    await interaction.followup.send("✅︱Pronostique envoyé en message privé")
 
 
 @client.event
