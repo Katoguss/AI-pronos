@@ -37,6 +37,32 @@ def _pretty_zai_http_error(prefix: str, status_code: int, text: str) -> str:
     return f"{prefix} HTTP {status_code}: {text}"
 
 
+def _extract_message_text(message: Any) -> str:
+    if not isinstance(message, dict):
+        return ""
+
+    content = message.get("content")
+
+    if isinstance(content, str):
+        return content.strip()
+
+    if isinstance(content, list):
+        chunks: list[str] = []
+        for part in content:
+            if isinstance(part, str):
+                if part.strip():
+                    chunks.append(part.strip())
+                continue
+
+            if isinstance(part, dict):
+                t = part.get("text") or part.get("content")
+                if isinstance(t, str) and t.strip():
+                    chunks.append(t.strip())
+        return "\n\n".join(chunks).strip()
+
+    return ""
+
+
 def format_web_results(results: list[dict[str, Any]]) -> str:
     if not results:
         return "(Aucun résultat)"
@@ -135,6 +161,17 @@ async def zai_prono(prompt: str, *, user_id: str | None = None) -> str:
         raise ZaiApiError("Z.ai Chat: réponse JSON invalide")
 
     try:
-        return (data["choices"][0]["message"]["content"] or "").strip()
+        choice = (data.get("choices") or [])[0]
+        message = choice.get("message") if isinstance(choice, dict) else None
+        finish_reason = choice.get("finish_reason") if isinstance(choice, dict) else None
     except Exception:
         raise ZaiApiError(f"Z.ai Chat: format de réponse inattendu: {data}")
+
+    text = _extract_message_text(message)
+    if not text:
+        fr = str(finish_reason or "").strip() or "unknown"
+        raise ZaiApiError(
+            f"Z.ai a renvoyé une réponse vide (finish_reason={fr}). Essaie de relancer, ou de changer ZAI_MODEL."
+        )
+
+    return text

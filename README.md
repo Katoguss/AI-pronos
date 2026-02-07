@@ -42,6 +42,8 @@ cp .env.example .env
 - `ZAI_API_KEY` (obligatoire)
 - `DISCORD_GUILD_ID` (optionnel mais recommandé en dev): ID du serveur Discord de test
 
+Note: `.env` ne doit pas être commit (il est ignoré par `.gitignore`).
+
 ## Lancer
 ```bash
 python bot.py
@@ -62,6 +64,7 @@ https://discord.com/oauth2/authorize?client_id=CLIENT_ID&scope=bot%20application
 - Si le bot ne peut pas envoyer de DM: l’utilisateur doit autoriser les messages privés du serveur.
 - Si `/prono` n’apparaît pas: vérifier que le bot a le scope `applications.commands` et relancer le bot.
 - Erreur `HTTP 429` avec message `余额不足...` / code `1113`: ça veut dire *crédits Z.ai insuffisants*. Il faut recharger ton compte Z.ai / activer un pack, ou utiliser une API key d’un compte avec du solde.
+- Si tu reçois en DM seulement `Voici ton pronostic :` (vide): Z.ai renvoie parfois une réponse vide. Le bot affiche maintenant une erreur explicite au lieu d’envoyer un DM vide. Si ça arrive encore, relance la commande ou teste un autre modèle (`ZAI_MODEL`).
 
 ## Références Z.ai
 - Chat Completions: https://docs.z.ai/api-reference/llm/chat-completion

@@ -104,6 +104,9 @@ async def prono(
             ephemeral=True,
         )
         return
+    except discord.HTTPException as e:
+        await interaction.followup.send(f"Erreur Discord lors de l'envoi du DM: {e}", ephemeral=True)
+        return
 
     await interaction.followup.send("Pronostique envoyé en message privé")
 
