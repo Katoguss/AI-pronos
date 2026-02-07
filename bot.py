@@ -18,6 +18,8 @@ ALLOWED_ROLE_IDS = {
     1466017041977966632,
 }
 
+ALLOWED_CHANNEL_ID = 1469765893943988224
+
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
@@ -78,6 +80,13 @@ async def prono(
     member = interaction.user if isinstance(interaction.user, discord.Member) else None
     if not interaction.guild or not member:
         await interaction.response.send_message("Commande utilisable uniquement sur un serveur.", ephemeral=True)
+        return
+
+    if interaction.channel_id != ALLOWED_CHANNEL_ID:
+        await interaction.response.send_message(
+            f"Commande autorisée uniquement dans ce salon: <#{ALLOWED_CHANNEL_ID}>.",
+            ephemeral=False,
+        )
         return
 
     if not any(r.id in ALLOWED_ROLE_IDS for r in member.roles):

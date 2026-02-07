@@ -10,6 +10,7 @@ Commande slash `/prono`:
 
 ## Commande
 `/prono` (serveur uniquement)
+- Salon autorisé: `1469765893943988224`
 - Accès: uniquement les membres ayant l’un de ces rôles (IDs): `1469711683277557833` ou `1466017041977966632`
 - `cote` (optionnel, texte) : ex `2.4` / `entre 2 et 3`
 - `risque` (optionnel, sélection) :
